@@ -1,0 +1,23 @@
+node_modules
+dist
+coverage
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+prisma/*.db
+prisma/*.db-journal
+test-db.js
+prisma_error.txt
+# .env is deliberately NOT ignored for private repo push
+.vscode
+.idea

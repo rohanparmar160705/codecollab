@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    environment {
+        // --- Configuration ---
+        DEPLOY_USER = 'ubuntu'
+        DEPLOY_HOST = 'your-server-ip'
+        SOURCE_DIR = '/home/ubuntu/codecollab-frontend'
+        WEB_ROOT = '/var/www/html/codecollab'
+    }
+
+    stages {
+        // Stage 1: Pull latest code from GitHub
+        stage('Checkout Code') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} '
+                            echo "📥 Pulling latest code..."
+                            cd ${SOURCE_DIR}
+                            git pull origin main
+                        '
+                    """
+                }
+            }
+        }
+
+        // Stage 2: Install NPM dependencies
+        stage('Install Dependencies') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} '
+                            echo "� Installing dependencies..."
+                            cd ${SOURCE_DIR}
+                            npm install
+                        '
+                    """
+                }
+            }
+        }
+
+        // Stage 3: Build and Deploy to Nginx
+        stage('Build & Deploy') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} '
+                            set -e
+                            
+                            echo "🔨 Building Vite project..."
+                            cd ${SOURCE_DIR}
+                            npm run build
+                            
+                            echo "📂 Deploying to Web Root..."
+                            # Ensure target directory exists
+                            sudo mkdir -p ${WEB_ROOT}
+                            
+                            # Copy build artifacts to Nginx root
+                            sudo cp -r dist/* ${WEB_ROOT}/
+                            
+                            echo "✅ Frontend Successfully Deployed!"
+                        '
+                    """
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  # 🗄️ Redis (Port 6379)
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    container_name: cc-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # 🐍 Python (Port 5001)
+  executor-python:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: cc-executor-python
+    environment:
+      - TIMEOUT_MS=10000
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+
+  # ☕ Java (Port 5002)
+  executor-java:
+    build:
+      context: ./java
+      dockerfile: Dockerfile
+    container_name: cc-executor-java
+    environment:
+      - TIMEOUT_MS=10000
+    ports:
+      - "5002:5000"
+    restart: unless-stopped
+
+  # ⚙️ C++ (Port 5003)
+  executor-cpp:
+    build:
+      context: ./cpp
+      dockerfile: Dockerfile
+    container_name: cc-executor-cpp
+    environment:
+      - TIMEOUT_MS=10000
+    ports:
+      - "5003:5000"
+    restart: unless-stopped
+
+  # 🟢 Node.js (Port 5004)
+  executor-node:
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    container_name: cc-executor-node
+    environment:
+      - TIMEOUT_MS=10000
+    ports:
+      - "5004:5000"
+    restart: unless-stopped

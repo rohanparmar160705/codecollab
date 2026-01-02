@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: codecollab-backend
+    env: docker
+    region: singapore
+    plan: free
+    branch: main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        value: "http://localhost:5173,https://codecollab-frontend-1au68sold-rohans-projects-1da2173a.vercel.app,https://codecollab-frontend.vercel.app"
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EXECUTOR_PYTHON_URL
+        sync: false
+      - key: EXECUTOR_JAVA_URL
+        sync: false
+      - key: EXECUTOR_CPP_URL
+        sync: false
+      - key: EXECUTOR_NODE_URL
+        sync: false

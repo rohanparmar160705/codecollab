@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  # Frontend Application
+  frontend:
+    build:
+      context: ./codecollab-frontend-private
+      dockerfile: Dockerfile
+    container_name: codecollab-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:4000/api
+      - VITE_SOCKET_URL=http://localhost:4000
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # Backend Application
+  backend:
+    build:
+      context: ./codecollab-backend-private
+      dockerfile: Dockerfile
+    container_name: codecollab-backend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./codecollab-backend-private/.env
+    environment:
+      # Override DB Host for Docker Network if needed, assuming Postgres is on Host
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/codecollab
+      - REDIS_URL=redis://redis:6379
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+
+# Include Executors & Redis from the backend-private configuration
+include:
+  - path: ./codecollab-backend-private/executors/docker-compose.yml
